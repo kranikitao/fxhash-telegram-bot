@@ -15,7 +15,7 @@ import (
 	"github.com/kranikitao/fxhash-telegram-bot/src/artcollector"
 	"github.com/kranikitao/fxhash-telegram-bot/src/chat"
 	"github.com/kranikitao/fxhash-telegram-bot/src/fxhash"
-	"github.com/kranikitao/fxhash-telegram-bot/src/sender"
+	"github.com/kranikitao/fxhash-telegram-bot/src/messagesender"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
@@ -66,7 +66,7 @@ func main() {
 		log.Panic(err)
 	}
 	go artcollector.New(newLogger("collector"), fxhash.New(), gormDB).Collect()
-	go sender.New(newLogger("sender"), bot, gormDB).Start()
+	go messagesender.New(newLogger("sender"), bot, gormDB).Start()
 
 	chat.New(bot, botLogger, gormDB).Start()
 }

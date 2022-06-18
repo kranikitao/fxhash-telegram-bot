@@ -6,6 +6,12 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	DeliveryItemTypeByArtist = "by_artist"
+	DeliveryItemTypeFree     = "free"
+	NullChatID               = -1
+)
+
 type DeliveryItem struct {
 	gorm.Model
 	ID             uint64    `gorm:"column:id"`
@@ -22,3 +28,7 @@ type DeliveryItem struct {
 func (m DeliveryItem) TableName() string {
 	return "delivery_items"
 }
+
+// func (m DeliveryItem) Is() string {
+// 	return "delivery_items"
+// }

@@ -12,7 +12,8 @@ const (
 func wrapListResult[T any](m []*T, err error) ([]*T, *errors.Error) {
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, errors.Wrap(err, ErrNotFound)
+			var emptyList []*T
+			return emptyList, errors.Wrap(err, ErrNotFound)
 		}
 		return nil, errors.Wrap(err, "")
 	}

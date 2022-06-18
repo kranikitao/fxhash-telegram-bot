@@ -45,3 +45,10 @@ func (s *SubscriberStore) FindByChatID(chatID int64) (*model.Subscriber, *errors
 
 	return wrapSingleResult(m, result.Error)
 }
+
+func (s *SubscriberStore) FindSubscribed() ([]*model.Subscriber, *errors.Error) {
+	var m []*model.Subscriber
+	result := s.gorm.Where("subscribed = true").Find(&m)
+
+	return wrapListResult(m, result.Error)
+}
