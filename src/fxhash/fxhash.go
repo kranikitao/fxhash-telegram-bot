@@ -34,6 +34,8 @@ type GenerativeToken struct {
 	Id                  int64                `json:"id"`
 	Slug                string               `json:"slug"`
 	Balance             int                  `json:"balance"`
+	Supply              int                  `json:"supply"`
+	ObjktsCount         int                  `json:"objktsCount"`
 	Flag                string               `json:"flag"`
 	Reserves            []*Reserve           `json:"reserves"`
 	Author              *Author              `json:"author"`
@@ -60,7 +62,7 @@ type Author struct {
 }
 
 func (fxHash *FxHash) GetLastGeneratives() ([]*GenerativeToken, *errors.Error) {
-	bodyString := `{"query":"query Query($filters: GenerativeTokenFilter, $sort: GenerativeSortInput, $take: Int) {\n  generativeTokens(filters: $filters, sort: $sort, take: $take) {\n    author {\n      name\n      id\n      collaborators {\n        name\n        id\n      }\n      type\n    }\n    name\n    slug\n    createdAt\n    id\n    flag\n    balance\n    mintOpensAt\n    reserves {\n      amount\n    }\n    enabled\n  }\n}","variables":{"sort":{"mintOpensAt":"DESC"},"take":50}}`
+	bodyString := `{"query":"query Query($filters: GenerativeTokenFilter, $sort: GenerativeSortInput, $take: Int) {\n  generativeTokens(filters: $filters, sort: $sort, take: $take) {\n    author {\n      name\n      id\n      collaborators {\n        name\n        id\n      }\n      type\n    }\n    name\n    slug\n    createdAt\n    id\n    flag\n    balance\n    objktsCount\n    supply\n    mintOpensAt\n    reserves {\n      amount\n    }\n    enabled\n  }\n}","variables":{"sort":{"mintOpensAt":"DESC"},"take":50}}`
 
 	response, err := fxHash.request(bodyString)
 	if err != nil {
@@ -120,7 +122,7 @@ func (*FxHash) isAvailableToMint(token *GenerativeToken) bool {
 			reserved += reserve.Amount
 		}
 	}
-	if token.Balance == reserved {
+	if reserved >= token.Balance {
 		return false
 	}
 
@@ -128,7 +130,7 @@ func (*FxHash) isAvailableToMint(token *GenerativeToken) bool {
 }
 
 func (fxHash *FxHash) GetFreeGeneratives() ([]*GenerativeToken, *errors.Error) {
-	bodyString := `{"query":"query Query($filters: GenerativeTokenFilter, $sort: GenerativeSortInput, $take: Int) {\n  generativeTokens(filters: $filters, sort: $sort, take: $take) {\n    author {\n      name\n      id\n      collaborators {\n        name\n        id\n      }\n      type\n    }\n    name\n    slug\n    createdAt\n    id\n    flag\n    balance\n    mintOpensAt\n    reserves {\n      amount\n    }\n    enabled\n    pricingFixed {\n      price\n    }\n    pricingDutchAuction {\n      finalPrice\n      restingPrice\n      levels\n      decrementDuration\n      opensAt\n    }\n  }\n}","variables":{"sort":{"mintOpensAt":"DESC"},"take":50,"filters":{"price_lte":1}}}`
+	bodyString := `{"query":"query Query($filters: GenerativeTokenFilter, $sort: GenerativeSortInput, $take: Int) {\n  generativeTokens(filters: $filters, sort: $sort, take: $take) {\n    author {\n      name\n      id\n      collaborators {\n        name\n        id\n      }\n      type\n    }\n    name\n    slug\n    createdAt\n    id\n    flag\n    balance\n    objktsCount\n    supply\n    mintOpensAt\n    reserves {\n      amount\n    }\n    enabled\n    pricingFixed {\n      price\n    }\n    pricingDutchAuction {\n      finalPrice\n      restingPrice\n      levels\n      decrementDuration\n      opensAt\n    }\n  }\n}","variables":{"sort":{"mintOpensAt":"DESC"},"take":50,"filters":{"price_lte":1}}}`
 
 	response, err := fxHash.request(bodyString)
 	if err != nil {

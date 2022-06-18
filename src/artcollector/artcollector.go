@@ -29,7 +29,7 @@ func New(logger *zap.Logger, fxhash *fxhash.FxHash, gorm *gorm.DB) *ArtCollector
 
 func (c *ArtCollector) Collect() {
 	done := make(chan bool)
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(60 * time.Second)
 	for {
 		select {
 		case <-done:
