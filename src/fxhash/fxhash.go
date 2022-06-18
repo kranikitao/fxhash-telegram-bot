@@ -143,7 +143,8 @@ func (fxHash *FxHash) GetFreeGeneratives() ([]*GenerativeToken, *errors.Error) {
 			continue
 		}
 
-		hasZeroCost := (token.PricingDutchAuction != nil && token.PricingDutchAuction.RestingPrice == 0) || (token.PricingFixed != nil && token.PricingFixed.Price == 0)
+		hasZeroCost := token.PricingFixed != nil && token.PricingFixed.Price == 0
+		// (token.PricingDutchAuction != nil && token.PricingDutchAuction.RestingPrice == 0)
 		if !hasZeroCost {
 			continue
 		}
