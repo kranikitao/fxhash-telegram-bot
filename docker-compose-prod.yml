@@ -7,6 +7,12 @@ services:
       dockerfile: Dockerfile
     image: ghcr.io/kranikitao/fxhash-telegram-bot/runner:latest
     restart: unless-stopped
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: eu-west-1
+        awslogs-group: DockerLogs
+        awslogs-stream: log-stream
     environment:
       FXBOT_TG_TOKEN: ${FXBOT_TG_TOKEN}
       FXBOT_DB_NAME: fxhashbot
@@ -20,6 +26,12 @@ services:
   postgres:
     build: postgres
     image: ghcr.io/kranikitao/fxhash-telegram-bot/postgres:latest
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: eu-west-1
+        awslogs-group: DockerLogs
+        awslogs-stream: log-stream
     environment:
       POSTGRES_USER: ${FXBOT_DB_USER}
       POSTGRES_PASSWORD: ${FXBOT_DB_PASSWORD}
