@@ -28,7 +28,3 @@ type DeliveryItem struct {
 func (m DeliveryItem) TableName() string {
 	return "delivery_items"
 }
-
-// func (m DeliveryItem) Is() string {
-// 	return "delivery_items"
-// }
