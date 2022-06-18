@@ -1,0 +1,42 @@
+name: fxhashbot CI
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup SSH
+      uses: kielabokkie/ssh-key-and-known-hosts-action@v1
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh-host: ${{ secrets.PRODUCTION_HOST }}
+        ssh-port: 22
+
+    - name: Docker login
+      uses: azure/docker-login@v1
+      with:
+        login-server: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build images
+      run: |
+        docker-compose -f docker-compose-prod.yml build
+        docker-compose -f docker-compose-prod.yml push  
+    
+    - name: Deploy
+      env:
+        FXBOT_TG_TOKEN: ${{ secrets.FXBOT_TG_TOKEN }}
+        FXBOT_DB_PASSWORD: ${{ secrets.FXBOT_DB_PASSWORD }}
+        FXBOT_DB_USER:  ${{ secrets.FXBOT_DB_USER }}
+      run: |
+        export DOCKER_HOST=ssh://ubuntu@${{ secrets.PRODUCTION_HOST }}
+        docker-compose -f docker-compose-prod.yml pull
+        docker-compose -f docker-compose-prod.yml up --force-recreate -d
+        unset DOCKER_HOST

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  bot:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      FXBOT_TG_TOKEN: 5511742080:AAEfRe083Hwfi0JfTVK4NPfRyXmpTYqsc0k
+      FXBOT_DB_NAME: fxhashbot
+      FXBOT_DB_HOST: postgres
+      FXBOT_DB_PASSWORD: password
+      FXBOT_DB_USER: fxhashbot
+      FXBOT_DB_PORT: 5432
+    depends_on:
+      - postgres
+
+  postgres:
+    build: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: fxhashbot
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: fxhashbot
+    volumes:
+      - database:/var/lib/postgresql/data
+
+volumes:
+  database:

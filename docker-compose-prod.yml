@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  bot:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/kranikitao/fxhash-telegram-bot/runner:latest
+    restart: unless-stopped
+    environment:
+      FXBOT_TG_TOKEN: ${FXBOT_TG_TOKEN}
+      FXBOT_DB_NAME: fxhashbot
+      FXBOT_DB_HOST: postgres
+      FXBOT_DB_PASSWORD: ${FXBOT_DB_PASSWORD}
+      FXBOT_DB_USER: ${FXBOT_DB_USER}
+      FXBOT_DB_PORT: 5432
+    depends_on:
+      - postgres
+
+  postgres:
+    build: postgres
+    image: ghcr.io/kranikitao/fxhash-telegram-bot/postgres:latest
+    environment:
+      POSTGRES_USER: ${FXBOT_DB_USER}
+      POSTGRES_PASSWORD: ${FXBOT_DB_PASSWORD}
+      POSTGRES_DB: fxhashbot
+    volumes:
+      - database:/var/lib/postgresql/data
+
+volumes:
+  database:
